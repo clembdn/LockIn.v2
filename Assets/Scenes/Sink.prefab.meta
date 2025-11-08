@@ -11,5 +11,5 @@ AssetOrigin:
   productId: 61018
   packageName: Low-Poly Sink and Toilet
   packageVersion: 1.0
-  assetPath: Assets/SinkAndToilet/Prefabs/Sink.prefab
+  assetPath: Assets/Scenes/Sink.prefab
   uploadId: 113918
