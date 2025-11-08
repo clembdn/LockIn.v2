@@ -1,0 +1,47 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Oo]bj/
+UserSettings/
+sysinfo.txt
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Visual Studio / JetBrains
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# Crash / build reports
+*.stacktrace
+
+# Packages cache
+Packages/com.unity.package-manager-do-not-modify
+
+# Android / iOS builds
+*.apk
+*.aab
+*.ipa
+
+# Addressable Assets
+*/[Aa]sset[Bb]undles/
+
+# Generated files
+*.bak
+*.obj
+*.pdb
