@@ -45,3 +45,8 @@ Packages/com.unity.package-manager-do-not-modify
 *.bak
 *.obj
 *.pdb
+
+/Assets/ALP_Assets/
+/Assets/Fantasy Forest Environment Free Sample
+/Assets/_TerrainAutoUpgrade
+
