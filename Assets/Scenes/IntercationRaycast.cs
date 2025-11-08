@@ -5,14 +5,12 @@ public class InteractionRaycast : MonoBehaviour
 {
     public float rayDistance = 10f; // distance de détection
     public LayerMask interactableLayer; // couche pour les objets interactifs
-    public TextMeshProUGUI interactionText; // texte UI à afficher
 
     private Camera cam;
 
     void Start()
     {
         cam = Camera.main;
-        interactionText.text = "";
     }
 
     void Update()
@@ -28,19 +26,16 @@ public class InteractionRaycast : MonoBehaviour
 
             if (hit.collider.CompareTag("Interactable"))
             {
-                interactionText.text = "Appuyez sur E pour récupérer";
-
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     Debug.Log("Objet ramassé !");
                     Destroy(hit.collider.gameObject);
-                    interactionText.text = "";
                 }
             }
         }
         else
         {
-            interactionText.text = "";
+            // interactionText.text = "";
         }
     }
 }

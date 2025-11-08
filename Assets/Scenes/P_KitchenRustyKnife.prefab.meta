@@ -11,5 +11,5 @@ AssetOrigin:
   productId: 83994
   packageName: HQ Kitchen Rusty Knife
   packageVersion: 1.0
-  assetPath: Assets/Dnk_Dev/KitchenRustyKnife/P_KitchenRustyKnife.prefab
+  assetPath: Assets/Scenes/P_KitchenRustyKnife.prefab
   uploadId: 172186
