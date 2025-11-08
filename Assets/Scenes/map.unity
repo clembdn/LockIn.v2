@@ -890,6 +890,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08c49dfdb71ae5446b71f603df49bb2e, type: 3}
+--- !u!4 &715493283 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5232236744523257716, guid: 58ae8f8c103ddcdbb88182fccee362d3, type: 3}
+  m_PrefabInstance: {fileID: 953413516}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &750595903
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -958,6 +963,18 @@ PrefabInstance:
     - target: {fileID: 1289100062823888, guid: 3561d375b004832418eaf9271450e06f, type: 3}
       propertyPath: m_Name
       value: P_KitchenRustyKnife
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289100062823888, guid: 3561d375b004832418eaf9271450e06f, type: 3}
+      propertyPath: m_TagString
+      value: Interactable
+      objectReference: {fileID: 0}
+    - target: {fileID: 1295194218107404, guid: 3561d375b004832418eaf9271450e06f, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1295194218107404, guid: 3561d375b004832418eaf9271450e06f, type: 3}
+      propertyPath: m_TagString
+      value: Interactable
       objectReference: {fileID: 0}
     - target: {fileID: 4902080754245960, guid: 3561d375b004832418eaf9271450e06f, type: 3}
       propertyPath: m_LocalScale.x
@@ -1252,7 +1269,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5232236744523257716, guid: 58ae8f8c103ddcdbb88182fccee362d3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2096171659}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 766703445815367443, guid: 58ae8f8c103ddcdbb88182fccee362d3, type: 3}
       insertIndex: -1
@@ -1674,6 +1694,10 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 8
+  handTransform: {fileID: 2096171659}
+  knifeRotationInHand: {x: 90, y: 0, z: 0}
+  knifePrefab: {fileID: 1289100062823888, guid: 3561d375b004832418eaf9271450e06f, type: 3}
+  interactionText: {fileID: 0}
 --- !u!1001 &1534464324
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2073,6 +2097,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fc0f7a11803d274a85639917bd1ab12, type: 3}
+--- !u!1 &2096171658
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2096171659}
+  m_Layer: 0
+  m_Name: Knife
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2096171659
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096171658}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.9063079, z: 0, w: 0.42261827}
+  m_LocalPosition: {x: 0.001, y: -0.0004, z: 0.0004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 715493283}
+  m_LocalEulerAnglesHint: {x: 0, y: 130, z: 0}
 --- !u!1001 &2137983065
 PrefabInstance:
   m_ObjectHideFlags: 0
