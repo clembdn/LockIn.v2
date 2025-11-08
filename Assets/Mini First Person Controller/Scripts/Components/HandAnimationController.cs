@@ -249,7 +249,7 @@ public class HandAnimationController : MonoBehaviour
         if (debugVerbose)
         {
             var st = handsAnimator.GetCurrentAnimatorStateInfo(0);
-            Debug.Log($"HandAnimationController Debug: StateHash={st.shortNameHash} normalizedTime={st.normalizedTime:F2} IsIdle={st.shortNameHash==idleStateHash || st.IsName(idleStateName)} IsCollect={(collectStateHash!=0 && (st.shortNameHash==collectStateHash || st.IsName(collectStateName)))} IsAttack={(attackStateHash!=0 && (st.shortNameHash==attackStateHash || st.IsName(attackStateName)))}");
+            // Debug.Log($"HandAnimationController Debug: StateHash={st.shortNameHash} normalizedTime={st.normalizedTime:F2} IsIdle={st.shortNameHash==idleStateHash || st.IsName(idleStateName)} IsCollect={(collectStateHash!=0 && (st.shortNameHash==collectStateHash || st.IsName(collectStateName)))}");
             _nextDebugTime = Time.time + 1f;
         }
     }
