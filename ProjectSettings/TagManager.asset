@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Interactable
   - FlashlightPickup
+  - Robot
   layers:
   - Default
   - TransparentFX
