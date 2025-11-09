@@ -72,10 +72,17 @@ public class DoorRaycastInteraction : MonoBehaviour
             {
                 currentDoor = door;
                 
+                // Vérifier si la porte est verrouillée
+                LockedDoor lockedDoor = door.GetComponent<LockedDoor>();
+                
                 // Afficher le texte approprié selon l'état de la porte
                 if (interactionText != null)
                 {
-                    if (door.IsOpen())
+                    if (lockedDoor != null && lockedDoor.IsLocked())
+                    {
+                        interactionText.text = $"🔒 Appuyez sur {interactKey} pour déverrouiller";
+                    }
+                    else if (door.IsOpen())
                     {
                         interactionText.text = $"Appuyez sur {interactKey} pour fermer";
                     }
@@ -88,8 +95,21 @@ public class DoorRaycastInteraction : MonoBehaviour
                 // Détecter l'input pour interagir
                 if (Input.GetKeyDown(interactKey))
                 {
-                    door.ToggleDoor();
-                    Debug.Log($"🚪 Interaction avec la porte : {hit.collider.name}");
+                    // Si la porte est verrouillée, essayer de la déverrouiller
+                    if (lockedDoor != null && lockedDoor.IsLocked())
+                    {
+                        bool success = lockedDoor.TryOpenDoor();
+                        if (!success)
+                        {
+                            Debug.Log($"🔒 Porte verrouillée : {hit.collider.name}");
+                        }
+                    }
+                    else
+                    {
+                        // Porte normale ou déjà déverrouillée
+                        door.ToggleDoor();
+                        Debug.Log($"🚪 Interaction avec la porte : {hit.collider.name}");
+                    }
                 }
             }
         }
