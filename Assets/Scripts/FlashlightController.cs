@@ -11,20 +11,24 @@ public class FlashlightSystem : MonoBehaviour
     public Transform playerCamera; 
     public float pickupDistance = 3f;
     public KeyCode pickupKey = KeyCode.E;
-
-    // NOUVEAU: Couleur de la surbrillance
+    
     public Color highlightColor = Color.yellow;
     public float highlightIntensity = 0.2f;
 
     [Header("Paramètres de Contrôle")]
     public KeyCode toggleKey = KeyCode.Mouse0;
+    
+    // NOUVEAU: Glissez votre "AudioSource" ici
+    public AudioSource toggleAudioSource; 
+    
+    // NOUVEAU: Glissez votre son MP3 ici
+    public AudioClip toggleSound; 
 
     // Variables privées
     private Light lightComponent;
     private bool playerHasFlashlight = false;
     private bool isLightOn = false;
-
-    // NOUVEAU: Variable pour mémoriser l'objet regardé
+    
     private Renderer currentlyHighlighted; 
 
     void Start()
@@ -54,38 +58,32 @@ public class FlashlightSystem : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(playerCamera.position, playerCamera.forward, out hit, pickupDistance))
         {
-            // Si on touche un objet avec le bon tag
             if (hit.collider.CompareTag("FlashlightPickup"))
             {
-                // NOUVEAU: Logique de surbrillance
                 Renderer rend = hit.collider.GetComponent<Renderer>();
                 if (rend != null)
                 {
-                    SetHighlight(rend, true); // Allume la surbrillance
-                    currentlyHighlighted = rend; // Mémorise l'objet
+                    SetHighlight(rend, true); 
+                    currentlyHighlighted = rend;
                 }
-
-                // Logique de ramassage (ne change pas)
+                
                 if (Input.GetKeyDown(pickupKey))
                 {
                     PickUpFlashlight(hit.collider.gameObject);
-                    ClearHighlight(); // Efface la surbrillance après ramassage
+                    ClearHighlight();
                 }
             }
-            // NOUVEAU: Si on regarde un autre objet
             else
             {
-                ClearHighlight(); // Efface l'ancienne surbrillance
+                ClearHighlight();
             }
         }
-        // NOUVEAU: Si on ne regarde rien
         else
         {
-            ClearHighlight(); // Efface l'ancienne surbrillance
+            ClearHighlight();
         }
     }
     
-    // NOUVEAU: Fonction pour activer/désactiver la surbrillance
     void SetHighlight(Renderer rend, bool highlight)
     {
         if (rend == null) return;
@@ -93,18 +91,15 @@ public class FlashlightSystem : MonoBehaviour
         Material mat = rend.material;
         if (highlight)
         {
-            mat.EnableKeyword("_EMISSION"); // Active la propriété d'émission
-            // Met la couleur d'émission au jaune (multiplié par 0.5 pour ne pas être aveuglant)
+            mat.EnableKeyword("_EMISSION");
             mat.SetColor("_EmissionColor", highlightColor * highlightIntensity);
         }
         else
         {
-            // Remet l'émission à noir (éteint)
             mat.SetColor("_EmissionColor", Color.black);
         }
     }
-
-    // NOUVEAU: Fonction pour effacer la surbrillance actuelle
+    
     void ClearHighlight()
     {
         if (currentlyHighlighted != null)
@@ -131,6 +126,12 @@ public class FlashlightSystem : MonoBehaviour
         {
             isLightOn = !isLightOn;
             if (lightComponent) lightComponent.enabled = isLightOn;
+
+            // NOUVEAU: Joue le son de "clic"
+            if (toggleAudioSource != null && toggleSound != null)
+            {
+                toggleAudioSource.PlayOneShot(toggleSound, 0.2f);
+            }
         }
     }
 }
