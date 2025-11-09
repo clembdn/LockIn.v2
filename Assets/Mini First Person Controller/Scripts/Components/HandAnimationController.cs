@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 /// Simple controller to drive hand animations:
 /// - Plays the Idle state at Start (the Animator should have an "Idle" state set as default).
 /// - Triggers the "Collect" parameter when the player presses E.
+/// - Triggers the "Attack" parameter when the player right-clicks (mouse button 1).
 ///
 /// Works with both the legacy Input Manager and the new Input System using compilation symbols.
 /// Setup in Unity:
@@ -33,11 +34,20 @@ public class HandAnimationController : MonoBehaviour
     [Tooltip("Optional: name of the Collect state to avoid retrigger while it's playing. Leave empty to skip the check.")]
     [SerializeField] private string collectStateName = "Collect";
 
+    [Header("Attack Settings")]
+    [Tooltip("Name of the Trigger parameter used to play the attack animation.")]
+    [SerializeField] private string attackTriggerName = "Attack";
+    [Tooltip("Optional: name of the Attack state to avoid retrigger while it's playing. Leave empty to skip the check.")]
+    [SerializeField] private string attackStateName = "Attack";
+
     // cached hashes for performance
     private int collectTriggerHash = -1;
     private int idleStateHash = -1;
     private int collectStateHash = -1;
     private bool collectParameterExists = false;
+    private int attackTriggerHash = -1;
+    private int attackStateHash = -1;
+    private bool attackParameterExists = false;
 
     [Header("Debug")]
     [Tooltip("If true, will log animator current state every second.")]
@@ -61,6 +71,8 @@ public class HandAnimationController : MonoBehaviour
         collectTriggerHash = Animator.StringToHash(collectTriggerName);
         idleStateHash = Animator.StringToHash(idleStateName);
         if (!string.IsNullOrEmpty(collectStateName)) collectStateHash = Animator.StringToHash(collectStateName);
+    attackTriggerHash = Animator.StringToHash(attackTriggerName);
+    if (!string.IsNullOrEmpty(attackStateName)) attackStateHash = Animator.StringToHash(attackStateName);
 
         // Verify trigger parameter exists
         collectParameterExists = HasTriggerParameter(collectTriggerName);
@@ -72,7 +84,16 @@ public class HandAnimationController : MonoBehaviour
             Debug.LogWarning($"HandAnimationController: Trigger parameter '{collectTriggerName}' not found. Available: {paramList}\nAdd a Trigger named '{collectTriggerName}' in the Animator Parameters panel.");
         }
 
-        Debug.Log($"HandAnimationController: starting. Animator='{handsAnimator.name}', IdleState='{idleStateName}', CollectTrigger='{collectTriggerName}'");
+        attackParameterExists = HasTriggerParameter(attackTriggerName);
+        if (!attackParameterExists)
+        {
+            string paramList = "";
+            foreach (var p in handsAnimator.parameters)
+                paramList += $"{p.name}({p.type}) ";
+            Debug.LogWarning($"HandAnimationController: Trigger parameter '{attackTriggerName}' not found. Available: {paramList}\nAdd a Trigger named '{attackTriggerName}' in the Animator Parameters panel.");
+        }
+
+    Debug.Log($"HandAnimationController: starting. Animator='{handsAnimator.name}', IdleState='{idleStateName}', CollectTrigger='{collectTriggerName}', AttackTrigger='{attackTriggerName}'");
 
         // Ensure animator component is enabled so it updates in Play Mode
         if (!handsAnimator.enabled)
@@ -121,23 +142,53 @@ public class HandAnimationController : MonoBehaviour
             handsAnimator.SetTrigger(collectTriggerName);
     }
 
+    [ContextMenu("Trigger Attack (Inspector)")]
+    private void ContextTriggerAttack()
+    {
+        if (handsAnimator == null)
+        {
+            Debug.LogWarning("HandAnimationController: no Animator assigned (ContextTriggerAttack).");
+            return;
+        }
+        Debug.Log("HandAnimationController: ContextTriggerAttack -> setting Attack trigger");
+        if (attackTriggerHash != -1)
+            handsAnimator.SetTrigger(attackTriggerHash);
+        else
+            handsAnimator.SetTrigger(attackTriggerName);
+    }
+
     private void Update()
     {
         if (handsAnimator == null) return;
 
-        bool collectPressed = false;
+    bool collectPressed = false;
+    bool attackPressed = false;
 
 #if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
         var keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.eKey.wasPressedThisFrame)
-            collectPressed = true;
-        // also support common gamepad button
+        if (keyboard != null)
+        {
+            if (keyboard.eKey.wasPressedThisFrame)
+                collectPressed = true;
+            // Right mouse button for attack
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.rightButton.wasPressedThisFrame)
+                attackPressed = true;
+        }
+        // also support common gamepad buttons (South for collect, West for attack?)
         var gamepad = Gamepad.current;
-        if (!collectPressed && gamepad != null && gamepad.buttonSouth.wasPressedThisFrame)
-            collectPressed = true;
+        if (gamepad != null)
+        {
+            if (!collectPressed && gamepad.buttonSouth.wasPressedThisFrame)
+                collectPressed = true;
+            if (!attackPressed && gamepad.buttonWest.wasPressedThisFrame)
+                attackPressed = true; // Square/X depending on layout
+        }
 #else
         if (Input.GetKeyDown(KeyCode.E))
             collectPressed = true;
+        if (Input.GetMouseButtonDown(1)) // right click
+            attackPressed = true;
 #endif
 
         if (collectPressed)
@@ -167,11 +218,38 @@ public class HandAnimationController : MonoBehaviour
             }
         }
 
+        if (attackPressed)
+        {
+            // Prevent retriggering if attack state already playing
+            if (attackStateHash != 0)
+            {
+                var info = handsAnimator.GetCurrentAnimatorStateInfo(0);
+                if (info.shortNameHash == attackStateHash || info.IsName(attackStateName))
+                {
+                    Debug.Log("HandAnimationController: attack pressed but Attack animation already playing -- ignoring.");
+                    return;
+                }
+            }
+
+            Debug.Log("HandAnimationController: Attack input detected -> setting trigger");
+            if (attackParameterExists)
+            {
+                if (attackTriggerHash != -1)
+                    handsAnimator.SetTrigger(attackTriggerHash);
+                else
+                    handsAnimator.SetTrigger(attackTriggerName);
+            }
+            else
+            {
+                Debug.LogWarning($"HandAnimationController: Cannot set trigger '{attackTriggerName}' because it does not exist.");
+            }
+        }
+
         // Periodic verbose state logging
         if (debugVerbose)
         {
             var st = handsAnimator.GetCurrentAnimatorStateInfo(0);
-            Debug.Log($"HandAnimationController Debug: StateHash={st.shortNameHash} normalizedTime={st.normalizedTime:F2} IsIdle={st.shortNameHash==idleStateHash || st.IsName(idleStateName)} IsCollect={(collectStateHash!=0 && (st.shortNameHash==collectStateHash || st.IsName(collectStateName)))}");
+            // Debug.Log($"HandAnimationController Debug: StateHash={st.shortNameHash} normalizedTime={st.normalizedTime:F2} IsIdle={st.shortNameHash==idleStateHash || st.IsName(idleStateName)} IsCollect={(collectStateHash!=0 && (st.shortNameHash==collectStateHash || st.IsName(collectStateName)))}");
             _nextDebugTime = Time.time + 1f;
         }
     }

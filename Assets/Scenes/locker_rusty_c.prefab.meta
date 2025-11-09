@@ -10,5 +10,5 @@ AssetOrigin:
   productId: 56405
   packageName: Locker
   packageVersion: 2.1
-  assetPath: Assets/Locker_HQ/Prefabs/locker_rusty_c.prefab
+  assetPath: Assets/Scenes/locker_rusty_c.prefab
   uploadId: 789808
